@@ -19,7 +19,7 @@ class PostType extends AbstractType
             ->add('title')
             ->add('image', type:FileType::class)
             ->add('category', EntityType::class, [
-                'class' => Category::class,
+                'class' => Category::class
             ])
             ->add('save', type: SubmitType::class
             )

@@ -50,6 +50,7 @@ class PostController extends AbstractController
                     $filename
                 );
 
+
                 $post->setImage($filename);
                 $em->persist($post);
                 $em->flush();

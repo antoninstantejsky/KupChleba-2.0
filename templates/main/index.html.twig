@@ -14,8 +14,8 @@
     <h1>Vítejte na Kupchleba!</h1>
 </div>
     <div class="link">
-        <a href="{{ path('app_registr', {'param': 'value'}) }}">Registrace</a><br>
-        <a href="{{ path('app_sign', {'param': 'value'}) }}">Přihlášení</a><br>
+        <a class="btn btn-primary" href="{{ path('app_register', {'param': 'value'}) }}">Registrace</a><br>
+        <a class="btn btn-primary" href="{{ path('app_login', {'param': 'value'}) }}">Přihlášení</a><br>
     </div>
 
 {% endblock %}

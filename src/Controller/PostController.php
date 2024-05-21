@@ -6,7 +6,6 @@ use App\Entity\Post;
 use App\Entity\Category;
 use App\Form\PostType;
 use App\Repository\PostRepository;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,7 +48,6 @@ class PostController extends AbstractController
                     $this->getParameter(name: 'uploads_dir'),
                     $filename
                 );
-
 
                 $post->setImage($filename);
                 $em->persist($post);

@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -21,6 +22,7 @@ class RegistrationController extends AbstractController
     {
         $form = $this->createFormBuilder()
             ->add('username')
+            ->add('email', EmailType::class)
             ->add('password', RepeatedType::class,[
                 'type' => PasswordType::class,
                 'required' => true,
@@ -41,6 +43,7 @@ class RegistrationController extends AbstractController
 
             $user = new User();
             $user->setUsername($data['username']);
+            $user->setEmail($data['email']);
             $user->setPassword(
                 $passwordHasher->hashPassword($user, $data['password'])
             );

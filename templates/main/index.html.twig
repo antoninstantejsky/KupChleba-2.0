@@ -13,9 +13,10 @@
 <div class="example-wrapper">
     <h1>Vítejte na Kupchleba!</h1>
 </div>
+    {% if not is_granted('IS_AUTHENTICATED_FULLY') %}
     <div class="link">
         <a class="btn btn-primary" href="{{ path('app_register', {'param': 'value'}) }}">Registrace</a><br>
         <a class="btn btn-primary" href="{{ path('app_login', {'param': 'value'}) }}">Přihlášení</a><br>
     </div>
-
+{% endif %}
 {% endblock %}

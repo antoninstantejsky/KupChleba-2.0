@@ -13,7 +13,6 @@ class ShoplistType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('shop')
             ->add('category')
             ->add('sort')
             ->add('quantity')

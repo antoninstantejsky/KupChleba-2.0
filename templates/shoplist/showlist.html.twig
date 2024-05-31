@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container text-center">
+        <div class="row">
+            <div class="col">
+                {% for list in lists %}
+                     <a class="btn btn-primary" href="{{ path('showlist', {'param': 'value'}) }}">{{ list.name }}</a>
+                    <br>
+            {% endfor %}
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

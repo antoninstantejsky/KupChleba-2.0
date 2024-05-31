@@ -13,6 +13,9 @@ class Shoplist
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column]
+    private ?int $user_id = null;
+
     #[ORM\Column(length: 255)]
     private ?string $shop = null;
 
@@ -134,6 +137,18 @@ class Shoplist
     public function setComment(?string $comment): static
     {
         $this->comment = $comment;
+
+        return $this;
+    }
+
+    public function getUserId(): ?int
+    {
+        return $this->user_id;
+    }
+
+    public function setUserId(int $user_id): static
+    {
+        $this->user_id = $user_id;
 
         return $this;
     }

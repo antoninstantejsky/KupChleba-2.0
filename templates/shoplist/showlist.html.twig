@@ -5,11 +5,23 @@
         <div class="row">
             <div class="col">
                 {% for list in lists %}
-                     <a class="btn btn-primary" href="{{ path('showlist', {'param': 'value'}) }}">{{ list.name }}</a>
-                    <br>
+                    <div class="card" style="width: 15rem; margin-bottom: 20px;">
+                        <h1>{{ list.name }}</h1>
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
+                            <button type="button" class="btn btn-outline-primary">Nakupovat</button>
+                            <button type="button" class="btn btn-outline-primary">
+                                <a href="{{ path('create', {'name': list.name}) }}">Upravit</a>
+                            </button>
+                            <button type="button" class="btn btn-outline-primary">
+                                <a class="text-danger" href="{{ path('shop_delete', {id: list.id}) }}">
+                                    Smazat
+                                </a>
+                            </button>
+                        </div>
+                    </div>
+
             {% endfor %}
             </div>
-
         </div>
     </div>
 {% endblock %}

@@ -64,16 +64,16 @@ class ShoplistController extends AbstractController
 
             $em->persist($list);
             $em->flush();
-            $id = (string) $list->getId();
-            return $this->redirect($this->generateUrl('create',['id'=>$id]));
+            $name = (string) $list->getName();
+            return $this->redirect($this->generateUrl('create',['name'=>$name]));
         }
         return $this->render('shoplist/index.html.twig', [
             'form' => $form->createView()
         ]);
     }
 
-    #[Route('/shoplist/create/{id}', name: 'create')]
-    public function create(ShoplistRepository $ShoplistRepository, Addlist $list,
+    #[Route('/shoplist/create/{name}', name: 'create')]
+    public function create(ShoplistRepository $ShoplistRepository, AddlistRepository $addlistRepository,
                            Request $reguest,
                            \Doctrine\Persistence\ManagerRegistry $doctrine, TokenStorageInterface $tokenStorage)
     {
@@ -82,25 +82,25 @@ class ShoplistController extends AbstractController
 
         $user = $tokenStorage->getToken()->getUser();
         $userId = $user->getId();
-        $id = $reguest->get('id');
+        $name = $reguest->get('name');
         $form = $this->createForm(ShoplistType::class, $shop);
         $form->handleRequest($reguest);
         if ($form->isSubmitted()){
             //entity manager
             $shop->setUserId($userId);
 
-            $shop->setShop($id);
+            $shop->setShop($name);
             $em = $doctrine->getManager();
                 $em->persist($shop);
                 $em->flush();
 
 
 
-            return $this->redirect($this->generateUrl('create',['id'=>$id]));
+            return $this->redirect($this->generateUrl('create',['name'=>$name]));
         }
 
         //return a response
-        $shops = $ShoplistRepository->findBy(['user_id'=>$userId, 'shop'=>$id]);
+        $shops = $ShoplistRepository->findBy(['user_id'=>$userId, 'shop'=>$name]);
         dump($shops);
         return $this->render('shoplist/create.html.twig', [
             'form' => $form,
@@ -131,7 +131,7 @@ class ShoplistController extends AbstractController
         ]);
     }
 
-    #[Route('/post/delete/{id}', name: 'delete')]
+    #[Route('/Shoplist/delete/{id}', name: 'delete')]
     public function remove(Shoplist $shop, \Doctrine\Persistence\ManagerRegistry $doctrine)
     {
         $em = $doctrine->getManager();

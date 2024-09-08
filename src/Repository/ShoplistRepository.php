@@ -21,6 +21,22 @@ class ShoplistRepository extends ServiceEntityRepository
         parent::__construct($registry, Shoplist::class);
     }
 
+    public function boughtItem(int $itemId): void
+    {
+        $em = $this->getEntityManager();
+        $item = $em->getRepository(Shoplist::class)->find($itemId);
+
+        if (!$item) {
+            throw $this->createNotFoundException(
+                'žádná položka s id'.$itemId
+            );
+        }
+
+        $item->setisDeleted(1);
+        $em->persist($item);
+        $em->flush();
+    }
+
     //    /**
     //     * @return Shoplist[] Returns an array of Shoplist objects
     //     */

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Addlist;
+use App\Entity\Shoplist;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -20,7 +21,21 @@ class AddlistRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Addlist::class);
     }
+    public function boughtItem(int $itemId): void
+    {
+        $em = $this->getEntityManager();
+        $item = $em->getRepository(Addlist::class)->find($itemId);
 
+        if (!$item) {
+            throw $this->createNotFoundException(
+                'žádná položka s id'.$itemId
+            );
+        }
+
+        $item->setBought(1);
+        $em->persist($item);
+        $em->flush();
+    }
     //    /**
     //     * @return Addlist[] Returns an array of Addlist objects
     //     */

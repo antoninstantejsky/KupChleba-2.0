@@ -2,9 +2,11 @@
 
 {% block body %}
     <div class="text-center">
-        {% for shop in shops %}
-            <h1>{{ shop.shop }}</h1>
-        {% endfor %}
+        {% if shops is not empty %}
+            <h1>{{ shops[0].shop }}</h1>
+        {% else %}
+            <h1>Nákupní košík je prázdný</h1>
+        {% endif %}
     </div>
 
     <div class="container text-center">
@@ -19,22 +21,91 @@
         </div>
     {% endfor %}
 
-        {% for shop in shops %}
-            <ul class="list-group">
-                <li class="list-group-item">
-                    <input class="form-check-input me-1" type="checkbox" value="" aria-label="...">{{ shop.id }}
-                    <a href="{{ path('show', {id: shop.id}) }}">
-                        {{ shop.sort }}
-                    </a>
-                    <a class="text-danger" href="{{ path('delete', {id: shop.id}) }}">
-                        Smazat
-                    </a>
-                </li>
-            </ul>
+    <table class="table ">
+        <thead>
+        <tr>
+            <th scope="col">Oddělení</th>
+            <th scope="col">Sortiment</th>
+            <th scope="col">Množství</th>
+            <th scope="col">Cena</th>
+            <!-- Přidejte další sloupce podle potřeby -->
+        </tr>
+        </thead>
+        <tbody class="table-group-divider">
+        {% for category, items in groupedShops %}
+            {% for shop in items %}
+                <tr>
+                    {% if loop.first %}
+                        <td>{{ category }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                    <td><a href="{{ path('show', {id: shop.id}) }}">{{ shop.sort }}</a></td>
+                    <td>{{ shop.quantity }} {{ shop.units }}</td>
+                    {% if not shop.quantity * shop.value == 0 %}
+                    <td>{{ shop.quantity * shop.value }}</td>
+                    {% else %}
+                        <td>-</td>
+                        {% endif %}
+                    <td><a class="text-danger delete-icon" href="{{ path('delete', {id: shop.id}) }}">
+                            {{ '&times;' | raw }}
+                        </a></td>
+                    {% if shop.comment is not empty %}
+                    <td>
+                        <label for="note_{{ shop.comment }}" class="note-icon">pozn.</label>
+                        <input type="checkbox" id="note_{{ shop.comment }}">
+                        <div class="note-content">{{ shop.comment|default('Žádná poznámka') }}</div>
+                    </td>
+                    {% endif %}
+                    <!-- Přidejte další sloupce podle potřeby -->
+                </tr>
+            {% endfor %}
         {% endfor %}
-
-</div>
-
+        </tbody>
+    </table>
+            </div>
+            <div class="col">
+                <h2>Očekávaná cena za nákup</h2>
+                <small>pouze pro položky se zadanou cenou a množstvím</small>
+                <h2>{{ totalCost|number_format(2, '.', ',') }} Kč</h2>
+                {% if shops|length > 0 %}
+                    <a class="btn btn-primary btn-lg" href="{{ path('buy', {name: shops[0].shop}) }}">Nakupovat</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
-    </div>
+
+<style>
+    .delete-icon {
+        font-size: 22px; /* Změňte velikost podle potřeby */
+        text-decoration: none;
+        cursor: pointer;
+    }
+</style>
+    {% block stylesheets %}
+        {{ parent() }}
+        <style>
+            .note-icon {
+                cursor: pointer;
+                font-size: 16px;
+                color: #007bff; /* Modrá barva pro ikonu poznámky */
+            }
+
+            .note-content {
+                display: none;
+                margin-top: 5px;
+                padding: 5px;
+                background-color: #f8f9fa;
+                border-radius: 4px;
+            }
+
+            input[type="checkbox"] {
+                display: none;
+            }
+
+            input[type="checkbox"]:checked ~ .note-content {
+                display: block;
+            }
+        </style>
+    {% endblock %}
 {% endblock %}

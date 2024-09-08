@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\AddlistRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AddlistRepository::class)]
@@ -18,6 +19,10 @@ class Addlist
 
     #[ORM\Column]
     private ?int $userId = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $bought = null;
+
 
     public function getId(): ?int
     {
@@ -44,6 +49,18 @@ class Addlist
     public function setUserId(int $userId): static
     {
         $this->userId = $userId;
+
+        return $this;
+    }
+
+    public function isBought(): ?bool
+    {
+        return $this->bought;
+    }
+
+    public function setBought(?bool $bought): static
+    {
+        $this->bought = $bought;
 
         return $this;
     }

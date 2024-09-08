@@ -5,10 +5,13 @@
         <div class="row">
             <div class="col">
                 {% for list in lists %}
-                    <div class="card" style="width: 15rem; margin-bottom: 20px;">
+                    {% if list.isBought %}
+                    <div class="card" style="width: 15rem; margin-bottom: 20px; background-color: lightgreen">
                         <h1>{{ list.name }}</h1>
                         <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
-                            <button type="button" class="btn btn-outline-primary">Nakupovat</button>
+                            <button type="button" class="btn btn-outline-primary">
+                                <a href="{{ path('buy', {'name': list.name}) }}">Nakupovat</a>
+                            </button>
                             <button type="button" class="btn btn-outline-primary">
                                 <a href="{{ path('create', {'name': list.name}) }}">Upravit</a>
                             </button>
@@ -19,8 +22,25 @@
                             </button>
                         </div>
                     </div>
-
-            {% endfor %}
+                {% else %}
+                    <div class="card" style="width: 15rem; margin-bottom: 20px; background-color: lightcoral">
+                        <h1>{{ list.name }}</h1>
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
+                            <button type="button" class="btn btn-outline-primary">
+                                <a href="{{ path('buy', {'name': list.name}) }}">Nakupovat</a>
+                            </button>
+                            <button type="button" class="btn btn-outline-primary">
+                                <a href="{{ path('create', {'name': list.name}) }}">Upravit</a>
+                            </button>
+                            <button type="button" class="btn btn-outline-primary">
+                                <a class="text-danger" href="{{ path('shop_delete', {id: list.id}) }}">
+                                    Smazat
+                                </a>
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
     </div>

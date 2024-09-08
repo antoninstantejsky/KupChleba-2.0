@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ShoplistRepository;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Boolean;
 
 #[ORM\Entity(repositoryClass: ShoplistRepository::class)]
 class Shoplist
@@ -39,6 +40,17 @@ class Shoplist
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $comment = null;
+
+    #[ORM\Column]
+    private ?bool $is_deleted;
+
+
+    public function getIsDeleted(): ?bool
+    {
+        return $this->is_deleted;
+    }
+
+
 
     public function getId(): ?int
     {
@@ -151,5 +163,19 @@ class Shoplist
         $this->user_id = $user_id;
 
         return $this;
+    }
+
+    public function isDeleted(): ?bool
+    {
+        return $this->isDeleted;
+    }
+
+    public function setIsDeleted(?bool $value)
+    {
+        $this->is_deleted = $value;
+    }
+    public function getDeleted(): ?bool
+    {
+        return $this->is_deleted;
     }
 }

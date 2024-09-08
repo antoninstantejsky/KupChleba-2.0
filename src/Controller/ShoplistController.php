@@ -102,9 +102,21 @@ class ShoplistController extends AbstractController
         //return a response
         $shops = $ShoplistRepository->findBy(['user_id'=>$userId, 'shop'=>$name]);
         dump($shops);
+        $groupedShops = [];
+        foreach ($shops as $shop) {
+            if (!isset($groupedShops[$shop->getCategory()])) {
+                $groupedShops[$shop->getCategory()] = [];
+            }
+            $groupedShops[$shop->getCategory()][] = $shop;
+        }
+        $totalCost = array_reduce($shops, function ($carry, $shop) {
+            return $carry + ($shop->getQuantity() * $shop->getValue());
+        }, 0);
         return $this->render('shoplist/create.html.twig', [
             'form' => $form,
             'shops' => $shops,
+            'groupedShops' => $groupedShops,
+            'totalCost' => $totalCost
         ]);
     }
 
@@ -132,7 +144,7 @@ class ShoplistController extends AbstractController
     }
 
     #[Route('/Shoplist/delete/{id}', name: 'delete')]
-    public function remove(Shoplist $shop, \Doctrine\Persistence\ManagerRegistry $doctrine)
+    public function remove(Request $request, Shoplist $shop, \Doctrine\Persistence\ManagerRegistry $doctrine)
     {
         $em = $doctrine->getManager();
         $em->remove($shop);
@@ -140,6 +152,66 @@ class ShoplistController extends AbstractController
 
         $this->addFlash(type: 'success', message: 'Položka byla odstraněna');
 
-        return $this->redirect($this->generateUrl(route:'create'));
+        $refererUrl = $request->headers->get('referer');
+
+        if ($refererUrl && filter_var($refererUrl, FILTER_VALIDATE_URL)) {
+            return $this->redirect($refererUrl);
+        } else {
+            return $this->redirectToRoute('home');
+        }
+    }
+
+    #[Route('/shoplist/buy/{name}', name: 'buy')]
+    public function buy( Request $reguest, TokenStorageInterface $tokenStorage,
+                         ShoplistRepository $ShoplistRepository, AddlistRepository $addlistRepository)
+    {
+        $user = $tokenStorage->getToken()->getUser();
+        $userId = $user->getId();
+        $name = $reguest->get('name');
+        $shops = $ShoplistRepository->findBy(['user_id'=>$userId, 'shop'=>$name]);
+        $list = $addlistRepository->findOneBy(['name'=>$name]);
+        $groupedShops = [];
+        foreach ($shops as $shop) {
+            if (!isset($groupedShops[$shop->getCategory()])) {
+                $groupedShops[$shop->getCategory()] = [];
+            }
+            $groupedShops[$shop->getCategory()][] = $shop;
+        }
+        $totalCost = array_reduce($shops, function ($carry, $shop) {
+            return $carry + ($shop->getQuantity() * $shop->getValue());
+        }, 0);
+        //Create the show view
+        return $this->render('shoplist/buy.html.twig', [
+            'shops' => $shops,
+            'list' => $list,
+            'groupedShops' => $groupedShops,
+            'totalCost' => $totalCost
+        ]);
+
+    }
+
+    #[Route('/Shoplist/bought/{id}', name: 'bought')]
+    public function bought(int $id, Request $request, \Doctrine\Persistence\ManagerRegistry $doctrine,
+                           ShoplistRepository $ShoplistRepository)
+    {
+        try {
+            $ShoplistRepository->boughtItem($id);
+
+            // Získání URL předchozí stránky z referer headeru
+            $refererUrl = $request->headers->get('referer');
+
+            // Kontrola, zda referer existuje a je validní URL
+            if ($refererUrl && filter_var($refererUrl, FILTER_VALIDATE_URL)) {
+                // Přesměrování zpět na předchozí stránku
+                return $this->redirect($refererUrl);
+            } else {
+                // Pokud referer není dostupný nebo validní, přesměrujeme na domovskou stránku nebo jinou standardní stránku
+                return $this->redirectToRoute('home');
+            }
+
+        } catch (\Exception $e) {
+            // Zde můžete přidat logování chyby pro lepší diagnostiku
+            return new Response('Došlo k chybě.', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }
